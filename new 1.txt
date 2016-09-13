@@ -1,3 +1,0 @@
-ask vern why i dont have to use a dash for comparison operators in GMWI, but i do in everything else i have come across: 
-
-
