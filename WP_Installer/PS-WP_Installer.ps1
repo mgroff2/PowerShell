@@ -1,11 +1,12 @@
 ﻿<# 
 
     .SYNOPSIS
-    Install a new WP site with all pre-reqs. Can be used for additional sites.
+    Install a new WP site with all pre-reqs using pre-set variables. Can be used for additional sites.
     
     .DESCRIPTION
     This script will create a WordPress site with known-working configurations.
     Script can also be used to add additional sites as checks are in place. 
+    To customize site, update custom variables as desired. 
     CAUTION - this script will overwrite a current site
         
     .OUTPUTS  
