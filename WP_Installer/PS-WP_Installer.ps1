@@ -55,12 +55,12 @@ $SecAuthSalt = "a}4L-qvxEx~x(f_]YiBgP(18%r)IerB+e4-I6m+ZkzgW4//V?x:P&:IvjIxguJIX
 $LogInSalt = "d-O >T]uyh:9?Pu`i8|222S|eY5lW8,`lPwG-b|^-|8z5]j(P+-T6c[^PO;4ZM2q"
 #Nonce Salt
 $NSalt = "pT[la{_E,yMHhMu|F1F|k7*q+PQ]u[e zdUjj5(%&gZnsxUGJgYsi?:h[d|o`5I)"
-#FTPSite
-
 #FTPUsername
-
-#FTP Password
-
+$FTPSiteUser = "FTPUser"
+#FTP Password - NOTE: Must be UNDER 14 characters, also must have a capital letter and special character
+$FTPSiteUserPW = "FTPPass123!"
+#FTP Group
+$FTPGroup = "FTP_User_Group"
 ###
 ###Variables to fill out ABOVE this line #######  ____________________________________________________________________________
 ###
@@ -228,7 +228,93 @@ ELSE
     " -ForegroundColor Green
 }
 
-#Finishing comments
+#Create FTP Group & User - Uses preset variables 
+
+#Group Creation
+
+IF (-not (Get-WmiObject -Class Win32_Group | Where-Object {$_.Name -eq "$FTPGroup"}))
+{
+    Invoke-Command -ScriptBlock {net localgroup /add $FTPGroup}
+}
+ELSE
+{
+    Write-Host "Local Group already exists" -ForegroundColor Red
+}
+
+#Users Creation
+
+IF (-not (Get-WmiObject -Class Win32_UserAccount | Where-Object {$_.Name -eq "$FTPSiteUser"}))
+{
+    Invoke-Command -ScriptBlock {net user /add $FTPSiteUser $FTPSiteUserPW} -ErrorAction SilentlyContinue
+}
+ELSE
+{
+    Write-Host "Local User already exists" -ForegroundColor Red
+}
+
+#Add User to Group
+
+IF (-not (  ((get-wmiobject Win32_GroupUser | where {( $_.GroupComponent -like "*$FTPGroup*" )}).partcomponent)| foreach { ($_).split('"')[3]} ))
+{
+    Invoke-Command -ScriptBlock {net localgroup $FTPGroup $FTPSiteUser /add }
+}
+ELSE
+{
+    Write-Host "Local User had already been added to necessary group" -ForegroundColor Red
+}
+
+#Create FTP Site (To update Wordpress and Plugins)
+$FTPSiteName = "Main FTP"
+$FTPSitePath = "C:\inetpub\ftproot"
+$FTPSitePathLocUsr = "C:\inetpub\ftproot\LocalUser"
+
+IF (-not (Test-Path -Path "$FTPSitePathLocUsr"))
+{
+    New-Item -Path $FTPSitePathLocUsr -ItemType Directory -ErrorAction SilentlyContinue
+    New-Item -Path $FTPSitePath -ItemType Directory -ErrorAction SilentlyContinue
+    New-WebFtpSite -Name $FTPSiteName -PhysicalPath $FTPSitePath -IPAddress * -Port 21
+}
+ELSE
+{
+    Write-Host "
+    FTP Site already exists in needed location: 'C:\inetpub\ftproot\LocalUser'
+    Updating your WordPress site will not work as it should
+    " -ForegroundColor Red
+} 
+
+IF (-not (Get-WebVirtualDirectory -Name "*$FTPSiteUser*") )
+{
+    New-WebVirtualDirectory -Site "$FTPSiteName\LocalUser" -Name $FTPSiteUser -PhysicalPath $directoryPath -ErrorAction SilentlyContinue
+}
+ELSE
+{
+   Write-Host "
+    Virtual Directory for FTP Site already exists
+    " -ForegroundColor Red 
+}
+
+#Setting User Permissions for FTP User Group in IIS - Adding Authorization in IIS
+
+#Giving Windows Group permissions to site
+Add-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST' -location 'Main FTP' -filter "system.ftpServer/security/authorization" -name "." -value @{accessType='Allow';roles="$FTPGroup";permissions='Read,Write'}
+
+#Enabeling Basic Auth for the FTP Site
+Set-ItemProperty "IIS:\Sites\$FTPSiteName" -Name ftpServer.security.authentication.basicAuthentication.enabled -Value $true
+
+#Setup User Isolation
+Set-ItemProperty "IIS:\Sites\$FTPSiteName" -Name ftpServer.userisolation.mode -Value IsolateAllDirectories
+
+#Disable Require SSL on FTP Site
+Set-ItemProperty "IIS:\Sites\Main FTP" -Name ftpServer.security.ssl.controlChannelPolicy -Value SslAllow
+Set-ItemProperty "IIS:\Sites\Main FTP" -Name ftpServer.security.ssl.dataChannelPolicy -Value SslAllow
+
+#Permission for FTP user to WP Directory
+$FTPAcl = Get-Acl -Path "$directoryPath"
+$FTPAclUser = New-Object system.security.accesscontrol.filesystemaccessrule("$FTPGroup","FullControl","ContainerInherit, ObjectInherit","None","Allow")
+$FTPAcl.SetAccessRule($FTPAclUser)
+Set-Acl -Path "$directoryPath" -AclObject $FTPAcl
+
+#Finishing up and loading your site
 Write-Host "
 Done! Now go configure your site" -ForegroundColor Green 
 Write-Host ""
