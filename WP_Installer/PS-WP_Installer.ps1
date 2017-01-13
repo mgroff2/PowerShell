@@ -73,9 +73,9 @@ Write-Host "Installing Windows Roles & Features if necessary... be patient" -For
 
 #Windows Roles & Features if they are not already installed
 Function Install-WP-Web-Features {
-IF ( Get-WindowsFeature -Name Web-Server, Web-Log-Libraries, Web-Request-Monitor, Web-App-Dev, Web-Net-Ext45, Web-CGI, Web-Ftp-Server | Where {$_.InstallState -eq "Available"} )
+IF ( Get-WindowsFeature -Name Web-Server, Web-Log-Libraries, Web-Request-Monitor, Web-App-Dev, Web-Net-Ext45, Web-CGI, Web-Ftp-Server, NET-Framework-Features | Where {$_.InstallState -eq "Available"} )
         {
-            Install-WindowsFeature -Name Web-Server, Web-Log-Libraries, Web-Request-Monitor, Web-App-Dev, Web-Net-Ext45, Web-CGI, Web-Ftp-Server -IncludeManagementTools
+            Install-WindowsFeature -Name Web-Server, Web-Log-Libraries, Web-Request-Monitor, Web-App-Dev, Web-Net-Ext45, Web-CGI, Web-Ftp-Server, NET-Framework-Features -IncludeManagementTools
         }
         ELSE
         {
