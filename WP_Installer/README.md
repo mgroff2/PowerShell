@@ -18,7 +18,7 @@ Wordpress Installation with a Powershell Script
     .NOTES
     Author: Michael Groff
     Minimum OS: 2012, 2012 R2
-    PS Version: 
+    PS Version: 5.0
     Date:  1/12/17
 	
 
