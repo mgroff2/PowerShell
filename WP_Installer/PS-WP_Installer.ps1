@@ -69,6 +69,24 @@ $FTPGroup = "FTP_User_Group"
 $iisAppPoolDotNetVersion = "v4.0"
 $sitelocation = "IIS:\sites\$iisAppName"
 
+#Checking Powershell Version
+
+$LocalPSVers = (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine\").PowerShellVersion | Where-Object {$_ -gt "5"}
+
+IF (-not$LocalPSVers)
+{
+    Read-Host "
+You need to upgrade to atleast PS Verion 5 before running this script!
+    Press enter to exit" 
+    BREAK
+}
+ELSE
+{
+    Write-Host "
+Correct Powershell Version found, you are good to go!
+    " -ForegroundColor Green
+}
+
 Write-Host "Installing Windows Roles & Features if necessary... be patient" -ForegroundColor Cyan
 
 #Windows Roles & Features if they are not already installed
