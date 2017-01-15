@@ -69,7 +69,7 @@ $FTPGroup = "FTP_User_Group"
 $iisAppPoolDotNetVersion = "v4.0"
 $sitelocation = "IIS:\sites\$iisAppName"
 
-Write-Host "Installing Windows Roles & Features if necessary... be patient" -ForegroundColor Yellow
+Write-Host "Installing Windows Roles & Features if necessary... be patient" -ForegroundColor Cyan
 
 #Windows Roles & Features if they are not already installed
 Function Install-WP-Web-Features {
@@ -88,6 +88,10 @@ Install-WP-Web-Features
 #Create a new Website and AppPool for WP to live in
 
 Import-Module WebAdministration
+
+Write-Host "
+Creating site and App Pool in IIS
+" -ForegroundColor Cyan 
 
 #navigate to the app pools root
 cd IIS:\AppPools\
@@ -110,6 +114,10 @@ if (!(Test-Path $iisAppName -pathType container))
     $iisApp = New-Item $iisAppName -bindings @{protocol="http";bindingInformation=":80:" + $iisAppName} -physicalPath $directoryPath
     $iisApp | Set-ItemProperty -Name "applicationPool" -Value $iisAppPoolName
 }
+
+Write-Host "
+Adding in hosts file entry
+" -ForegroundColor Cyan 
 
 #Adds in hosts file entry for your new site: 
 function add-hostfilecontent {            
@@ -135,11 +143,8 @@ function add-hostfilecontent {
 add-hostfilecontent -IPAddress 127.0.0.1 -computer $iisAppName
 
 Write-Host "
-Installing Web Platform Installer... keep waiting
-" -ForegroundColor Yellow
-Write-Host "
-Now for the fun part...
-" -ForegroundColor White
+Installing Web Platform Installer
+" -ForegroundColor Cyan
 
 #Install Web Platform Installer if its not already installed
 $WPIPath = Test-Path "C:\Program Files\Microsoft\Web Platform Installer\WebPlatformInstaller.exe"
@@ -196,6 +201,10 @@ Nonce Salt[@]$NSalt
 #Reload Paths to understand WebPICMD.exe
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
+Write-Host "
+Starting the WP install
+" -ForegroundColor Cyan 
+
 #Install WP & all necessary modules
 cd $env:USERPROFILE\Desktop
 WebPICMD.exe /Install /Application:Wordpress@wp.app /Products:PHP54,PHPManager /AcceptEULA /MySQLPassword:$MySQL /Log:$env:HOMEDRIVE\WPIntsalllog.txt
@@ -214,7 +223,7 @@ Remove-WebConfigurationProperty  -pspath $sitelocation -filter "system.webServer
 Remove-WebConfigurationProperty  -pspath $sitelocation -filter "system.webServer/defaultDocument/files" -name "." -AtElement @{value='index.html'}
 Remove-WebConfigurationProperty  -pspath $sitelocation -filter "system.webServer/defaultDocument/files" -name "." -AtElement @{value='iisstart.htm'}
 
-#Remove PHP 5.5 as WP only works with 5.4: 
+#Remove PHP 5.5 as WP only works with 5.4 afaik: 
 $TestPHP55 =  Get-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST'  -filter "system.webServer/handlers/add[@name='PHP55_via_FastCGI']"  -Name "type"
 
 IF ($TestPHP55)
@@ -228,6 +237,9 @@ ELSE
     " -ForegroundColor Green
 }
 
+Write-Host "
+Creating User and Group for FTP
+" -ForegroundColor Cyan 
 #Create FTP Group & User - Uses preset variables 
 
 #Group Creation
@@ -253,8 +265,9 @@ ELSE
 }
 
 #Add User to Group
+$TestFTPGroupExist = (get-wmiobject Win32_GroupUser | where {$_.GroupComponent -like "*$FTPGroup*"}).partcomponent
 
-IF (-not (  ((get-wmiobject Win32_GroupUser | where {( $_.GroupComponent -like "*$FTPGroup*" )}).partcomponent)| foreach { ($_).split('"')[3]} ))
+IF (-not ($TestFTPGroupExist))
 {
     Invoke-Command -ScriptBlock {net localgroup $FTPGroup $FTPSiteUser /add }
 }
@@ -295,10 +308,10 @@ ELSE
 
 #Setting User Permissions for FTP User Group in IIS - Adding Authorization in IIS
 
-#Giving Windows Group permissions to site
+#Giving Windows Group permissions to site for FTP
 Add-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST' -location 'Main FTP' -filter "system.ftpServer/security/authorization" -name "." -value @{accessType='Allow';roles="$FTPGroup";permissions='Read,Write'}
 
-#Enabeling Basic Auth for the FTP Site
+#Enable Basic Auth for the FTP Site
 Set-ItemProperty "IIS:\Sites\$FTPSiteName" -Name ftpServer.security.authentication.basicAuthentication.enabled -Value $true
 
 #Setup User Isolation
@@ -315,9 +328,6 @@ $FTPAcl.SetAccessRule($FTPAclUser)
 Set-Acl -Path "$directoryPath" -AclObject $FTPAcl
 
 #Finishing up and loading your site
-Write-Host "
-Done! Now go configure your site" -ForegroundColor Green 
-Write-Host ""
 #Cleanup
 Remove-Item $env:USERPROFILE\Desktop\wp.app -Force
 
@@ -345,8 +355,9 @@ function Disable-UserAccessControl {
 
 Disable-InternetExplorerESC
 Write-Host ""
-Disable-UserAccessControl | Out-Null
-
+Disable-UserAccessControl
+Write-Host "
+Done! Now go configure your site" -ForegroundColor Green 
 #Opening IE to your WP site
 $url = "http://$iisAppName/"
 
@@ -363,6 +374,5 @@ Start-Process $env:HOMEDRIVE\WPIntsalllog.txt
 #Open IIS
 Start-Process C:\Windows\system32\inetsrv\inetmgr.exe
 
-Write-Host "
-"
-Read-Host -Prompt "Press Enter to exit:" 
+Write-Host ""
+Read-Host -Prompt "Press Enter to exit" 
