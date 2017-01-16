@@ -95,10 +95,14 @@ $LogInSalt = "d-O >T]uyh:9?Pu`i8|222S|eY5lW8,`lPwG-b|^-|8z5]j(P+-T6c[^PO;4ZM2q"
 #Nonce Salt
 $NSalt = "pT[la{_E,yMHhMu|F1F|k7*q+PQ]u[e zdUjj5(%&gZnsxUGJgYsi?:h[d|o`5I)"
 #FTPUsername
-Write-Host "The FTP Username is a Windows Users" -ForegroundColor Yellow
+Write-Host "
+The FTP Username is a Windows Users
+" -ForegroundColor Yellow
 $FTPSiteUser = Read-host -prompt "Enter the FTP Username"
 #FTP Password - NOTE: Must be UNDER 14 characters, also must have a capital letter and special character
-Write-Host "The FTP User Pasword must be UNDER 14 characters & must have a capital letter and special character" -ForegroundColor Yellow
+Write-Host "
+The FTP User Pasword must be UNDER 14 characters & must have a capital letter and special character
+" -ForegroundColor Yellow
 $FTPSiteUserPW = Read-host -prompt "Enter the FTP User Pasword"
 #FTP Group
 $FTPGroup = "FTP_User_Group"
@@ -110,7 +114,8 @@ $FTPGroup = "FTP_User_Group"
 $iisAppPoolDotNetVersion = "v4.0"
 $sitelocation = "IIS:\sites\$iisAppName"
 
-Write-Host "Installing Windows Roles & Features if necessary... be patient
+Write-Host "
+Installing Windows Roles & Features if necessary... be patient
 " -ForegroundColor Cyan
 
 #Windows Roles & Features if they are not already installed
@@ -345,7 +350,7 @@ ELSE
 {
     Write-Host "
 FTP Site already exists in location: 'C:\inetpub\ftproot\LocalUser'
-Updating your WordPress site may will not work as designed with FTP
+Updating your WordPress site may not work as designed with FTP
     " -ForegroundColor Yellow
     Write-Host "
 Attempting to create virtual direcotry in FTP Site. 
@@ -433,7 +438,7 @@ IF (
 ELSE
 {
     Write-Host "
-Internet Explorer Enhanced Security has already been disabled.
+IE Enhanced Security Configuration (ESC) has already been disabled.
     " -ForegroundColor Green
 }
 
@@ -445,7 +450,7 @@ IF (((Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies
 ELSE
 {
     Write-Host "
-User Access Control has already been disabled. 
+User Access Control (UAC) has already been disabled. 
     " -ForegroundColor Green
 }
 
