@@ -20,55 +20,6 @@
     
 #>
 
-
-###
-###Variables to fill out BELOW this line  ____________________________________________________________________________
-###
-#Site Name, must inclue the TLD (.com, .info, .net, etc.)
-$iisAppName = "MyWordpressSite.com"
-#IIS App Pool Name: 
-$iisAppPoolName = "MyWordpressSite.com"
-#Site Path
-$directoryPath = "C:\inetpub\wwwroot\MyWordpressSite"
-#Database Name
-$dbn = "wordpress612"
-#Database Username
-$dbun ="wordpressuser612"
-#Database User Password
-$dbpw = "mysecretpassword612"
-#MySQL root password
-$MySQL = "v9gvBhTG@*b6n#^!v"
-#Salt Keys - https://api.wordpress.org/secret-key/1.1/salt/ (NOTE: Replace any $ that you see with another character!)
-#Authentication Key
-$AuthKey = "ry=,b*Gp,+1-voDYM`zq#:S_^ODN Lp9:_:&D5o6C%0SXsyi<k`Q .Z]NK3144ay"
-#Secure Authentication Key
-$SecAuthKey = "f5h-Ss+}97fG%m+yS5X,zh3)>B/_/^C0x:sJv7Cta0+Cy=X_{E>[RN+A=-(*%Z+t"
-#Logged In Key
-$LogInKey = "N-< +[doN4gwtyk?PZK>=~iU8]-oS)wPt6l~.qMES}<vr v.Px`d#4MxOb`e.&7-"
-#Nonce Key
-$NKey = ":!!Pu0e5a?ux,+P)C[|T~,:IN,+m0H.6.JT%Ov_;_.J9;<@dCNpu|+@;L{G)W%|3"
-#Authentication Salt
-$AuthSalt = "SlHw{qnL#.kN--|u+Rw|kTe#(QR=Ak`_MUO8!#]`3L7.L=X<nX3><w/}MuRu9w`J"
-#Secure Authentication Salt
-$SecAuthSalt = "a}4L-qvxEx~x(f_]YiBgP(18%r)IerB+e4-I6m+ZkzgW4//V?x:P&:IvjIxguJIX"
-#Logged In Salt
-$LogInSalt = "d-O >T]uyh:9?Pu`i8|222S|eY5lW8,`lPwG-b|^-|8z5]j(P+-T6c[^PO;4ZM2q"
-#Nonce Salt
-$NSalt = "pT[la{_E,yMHhMu|F1F|k7*q+PQ]u[e zdUjj5(%&gZnsxUGJgYsi?:h[d|o`5I)"
-#FTPUsername
-$FTPSiteUser = "FTPUser"
-#FTP Password - NOTE: Must be UNDER 14 characters, also must have a capital letter and special character
-$FTPSiteUserPW = "FTPPass123!"
-#FTP Group
-$FTPGroup = "FTP_User_Group"
-###
-###Variables to fill out ABOVE this line #######  ____________________________________________________________________________
-###
-
-###Variables to leave alone: 
-$iisAppPoolDotNetVersion = "v4.0"
-$sitelocation = "IIS:\sites\$iisAppName"
-
 #Checking Powershell Version
 
 $LocalPSVers = (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine\").PowerShellVersion | Where-Object {$_ -gt "5"}
@@ -88,7 +39,79 @@ Correct Powershell Version found, you are good to go!
     " -ForegroundColor Green
 }
 
-Write-Host "Installing Windows Roles & Features if necessary... be patient" -ForegroundColor Cyan
+###
+###Variables to fill out BELOW this line  ____________________________________________________________________________
+###
+#Site Name, must inclue the TLD (.com, .info, .net, etc.)
+Write-Host "
+The website name, must inclue the TLD (.com, .info, .net, etc.)
+" -ForegroundColor Yellow
+$iisAppName = Read-host -prompt "Enter the website name"
+#IIS App Pool Name: 
+Write-Host "
+The iis app pool name, can be same as website)
+" -ForegroundColor Yellow
+$iisAppPoolName = Read-host -prompt "Enter the iis app pool name, can be same as website"
+#Site Path
+Write-Host "
+The suggested website root directory path is C:\inetpub\wwwroot\MyWordpressSite
+" -ForegroundColor Yellow
+$directoryPath = Read-host -prompt "Enter the Website root directory path"
+#Database Name
+Write-Host "
+The WordPress Database is a MySQL Database
+" -ForegroundColor Yellow
+$dbn = Read-host -prompt "Enter the WordPress Database Name"
+#Database Username
+Write-Host "
+The WordPress Database User is a MySQL User
+" -ForegroundColor Yellow
+$dbun = Read-host -prompt "Enter the WordPress Database Username"
+#Database User Password
+Write-Host "
+The Wordpress Database Password should be a strong password, minimum 12 characters
+" -ForegroundColor Yellow
+$dbpw = Read-host -prompt "Enter the WordPress Database User Password"
+#MySQL root password
+Write-Host "
+The  MySQL root password, this will creat one if it doesnt exist
+" -ForegroundColor Yellow
+$MySQL = Read-host -prompt "Enter the MySQL root password"
+#Salt Keys - https://api.wordpress.org/secret-key/1.1/salt/ (NOTE: Replace any $ that you see with another character!)
+#Authentication Key
+$AuthKey = "ry=,b*Gp,+1-voDYM`zq#:S_^ODN Lp9:_:&D5o6C%0SXsyi<k`Q .Z]NK3144ay"
+#Secure Authentication Key
+$SecAuthKey = "f5h-Ss+}97fG%m+yS5X,zh3)>B/_/^C0x:sJv7Cta0+Cy=X_{E>[RN+A=-(*%Z+t"
+#Logged In Key
+$LogInKey = "N-< +[doN4gwtyk?PZK>=~iU8]-oS)wPt6l~.qMES}<vr v.Px`d#4MxOb`e.&7-"
+#Nonce Key
+$NKey = ":!!Pu0e5a?ux,+P)C[|T~,:IN,+m0H.6.JT%Ov_;_.J9;<@dCNpu|+@;L{G)W%|3"
+#Authentication Salt
+$AuthSalt = "SlHw{qnL#.kN--|u+Rw|kTe#(QR=Ak`_MUO8!#]`3L7.L=X<nX3><w/}MuRu9w`J"
+#Secure Authentication Salt
+$SecAuthSalt = "a}4L-qvxEx~x(f_]YiBgP(18%r)IerB+e4-I6m+ZkzgW4//V?x:P&:IvjIxguJIX"
+#Logged In Salt
+$LogInSalt = "d-O >T]uyh:9?Pu`i8|222S|eY5lW8,`lPwG-b|^-|8z5]j(P+-T6c[^PO;4ZM2q"
+#Nonce Salt
+$NSalt = "pT[la{_E,yMHhMu|F1F|k7*q+PQ]u[e zdUjj5(%&gZnsxUGJgYsi?:h[d|o`5I)"
+#FTPUsername
+Write-Host "The FTP Username is a Windows Users" -ForegroundColor Yellow
+$FTPSiteUser = Read-host -prompt "Enter the FTP Username"
+#FTP Password - NOTE: Must be UNDER 14 characters, also must have a capital letter and special character
+Write-Host "The FTP User Pasword must be UNDER 14 characters & must have a capital letter and special character" -ForegroundColor Yellow
+$FTPSiteUserPW = Read-host -prompt "Enter the FTP User Pasword"
+#FTP Group
+$FTPGroup = "FTP_User_Group"
+###
+###Variables to fill out ABOVE this line #######  ____________________________________________________________________________
+###
+
+###Variables to leave alone: 
+$iisAppPoolDotNetVersion = "v4.0"
+$sitelocation = "IIS:\sites\$iisAppName"
+
+Write-Host "Installing Windows Roles & Features if necessary... be patient
+" -ForegroundColor Cyan
 
 #Windows Roles & Features if they are not already installed
 Function Install-WP-Web-Features {
@@ -98,7 +121,9 @@ IF ( Get-WindowsFeature -Name Web-Server, Web-Log-Libraries, Web-Request-Monitor
         }
         ELSE
         {
-            Return  Write-Host "Necessary Windows Features are already installed!" -ForegroundColor Green
+            Return  Write-Host "
+Necessary Windows Features are already installed!
+            " -ForegroundColor Green
         }
 }
 
@@ -174,7 +199,9 @@ Function Install-WPI {
         }
         ELSE
         {
-            Return Write-Host "Web Plaform Installer 5.0 is already installed!" -ForegroundColor Green
+            Return Write-Host "
+Web Plaform Installer 5.0 is already installed!
+            " -ForegroundColor Green
             break
         }
 } 
@@ -182,8 +209,10 @@ Function Install-WPI {
 Install-WPI
 
 #The .app info
-Write-Host "If the script stopped here..." -ForegroundColor Red
-Write-Host "you did not fill out the variable information above... correctly" -ForegroundColor Yellow
+Write-Host "
+If the script stopped here..." -ForegroundColor Red
+Write-Host "you did not fill out the variable information above... correctly
+" -ForegroundColor Yellow
 
 New-Item $env:USERPROFILE\Desktop\wp.app -ItemType file -value "AppPath[@]$iisAppName
 
@@ -221,8 +250,7 @@ Nonce Salt[@]$NSalt
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 Write-Host "
-Starting the WP install
-" -ForegroundColor Cyan 
+Starting the WP install" -ForegroundColor Cyan 
 
 #Install WP & all necessary modules
 cd $env:USERPROFILE\Desktop
@@ -252,42 +280,49 @@ IF ($TestPHP55)
 ELSE
 {
     Write-Host "
-    PHP 5.5 has already been removed!
+PHP 5.5 has already been removed!
     " -ForegroundColor Green
 }
 
-Write-Host "
-Creating User and Group for FTP
-" -ForegroundColor Cyan 
 #Create FTP Group & User - Uses preset variables 
-
 #Group Creation
 
 IF (-not (Get-WmiObject -Class Win32_Group | Where-Object {$_.Name -eq "$FTPGroup"}))
 {
+    Write-Host "
+Creating FTP User Group
+    " -ForegroundColor Cyan
     Invoke-Command -ScriptBlock {net localgroup /add $FTPGroup}
 }
 ELSE
 {
-    Write-Host "Local Group already exists" -ForegroundColor Red
+    Write-Host "
+Local Group already exists
+    " -ForegroundColor Yellow
 }
 
 #Users Creation
 
 IF (-not (Get-WmiObject -Class Win32_UserAccount | Where-Object {$_.Name -eq "$FTPSiteUser"}))
 {
+    Write-Host "
+Creating FTP User
+    " -ForegroundColor Cyan
     Invoke-Command -ScriptBlock {net user /add $FTPSiteUser $FTPSiteUserPW} -ErrorAction SilentlyContinue
 }
 ELSE
 {
-    Write-Host "Local User already exists" -ForegroundColor Red
+    Write-Host "
+Local User already exists
+    " -ForegroundColor Red
 }
 
-#Add User to Group
+#Add User to Group - this still needs work
 $TestFTPGroupExist = (get-wmiobject Win32_GroupUser | where {$_.GroupComponent -like "*$FTPGroup*"}).partcomponent
 
 IF (-not ($TestFTPGroupExist))
 {
+    Write-Host "Adding user to FTP User Group" -ForegroundColor Cyan
     Invoke-Command -ScriptBlock {net localgroup $FTPGroup $FTPSiteUser /add }
 }
 ELSE
@@ -309,26 +344,41 @@ IF (-not (Test-Path -Path "$FTPSitePathLocUsr"))
 ELSE
 {
     Write-Host "
-    FTP Site already exists in needed location: 'C:\inetpub\ftproot\LocalUser'
-    Updating your WordPress site will not work as it should
-    " -ForegroundColor Red
+FTP Site already exists in location: 'C:\inetpub\ftproot\LocalUser'
+Updating your WordPress site may will not work as designed with FTP
+    " -ForegroundColor Yellow
+    Write-Host "
+Attempting to create virtual direcotry in FTP Site. 
+    " -ForegroundColor Yellow
 } 
 
 IF (-not (Get-WebVirtualDirectory -Name "*$FTPSiteUser*") )
 {
     New-WebVirtualDirectory -Site "$FTPSiteName\LocalUser" -Name $FTPSiteUser -PhysicalPath $directoryPath -ErrorAction SilentlyContinue
+    Write-Host "
+FTP virtual direcotry has been created!
+    " -ForegroundColor Green
 }
 ELSE
 {
-   Write-Host "
-    Virtual Directory for FTP Site already exists
+    Write-Host "
+Virtual Directory for FTP Site already exists
     " -ForegroundColor Red 
 }
 
-#Setting User Permissions for FTP User Group in IIS - Adding Authorization in IIS
+#Setting User/Group Permissions for FTP User Group in IIS - Adding Authorization in IIS
 
 #Giving Windows Group permissions to site for FTP
-Add-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST' -location 'Main FTP' -filter "system.ftpServer/security/authorization" -name "." -value @{accessType='Allow';roles="$FTPGroup";permissions='Read,Write'}
+IF (-not((Get-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST' -location "$FTPSiteName" -filter "system.ftpServer/security/authorization/add" -name ".").roles))
+{
+Add-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST' -location "$FTPSiteName" -filter "system.ftpServer/security/authorization" -name "." -value @{accessType='Allow';roles="$FTPGroup";permissions='Read,Write'}
+}
+ELSE
+{
+    Write-Host " 
+FTP User Group has already been given proper permissions in IIS. 
+    " -ForegroundColor Green 
+}
 
 #Enable Basic Auth for the FTP Site
 Set-ItemProperty "IIS:\Sites\$FTPSiteName" -Name ftpServer.security.authentication.basicAuthentication.enabled -Value $true
@@ -337,8 +387,8 @@ Set-ItemProperty "IIS:\Sites\$FTPSiteName" -Name ftpServer.security.authenticati
 Set-ItemProperty "IIS:\Sites\$FTPSiteName" -Name ftpServer.userisolation.mode -Value IsolateAllDirectories
 
 #Disable Require SSL on FTP Site
-Set-ItemProperty "IIS:\Sites\Main FTP" -Name ftpServer.security.ssl.controlChannelPolicy -Value SslAllow
-Set-ItemProperty "IIS:\Sites\Main FTP" -Name ftpServer.security.ssl.dataChannelPolicy -Value SslAllow
+Set-ItemProperty "IIS:\Sites\$FTPSiteName" -Name ftpServer.security.ssl.controlChannelPolicy -Value SslAllow
+Set-ItemProperty "IIS:\Sites\$FTPSiteName" -Name ftpServer.security.ssl.dataChannelPolicy -Value SslAllow
 
 #Permission for FTP user to WP Directory
 $FTPAcl = Get-Acl -Path "$directoryPath"
@@ -372,9 +422,33 @@ function Disable-UserAccessControl {
     Write-Host "User Access Control (UAC) has been disabled." -ForegroundColor Green    
 }
 
-Disable-InternetExplorerESC
-Write-Host ""
-Disable-UserAccessControl
+#Disable IE Enhanced Security if its not already
+IF (
+((Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}").IsInstalled | Where-Object {$_ -gt "0"}) + 
+((Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}").IsInstalled | Where-Object {$_ -gt "0"})
+)
+{
+    Disable-InternetExplorerESC
+}
+ELSE
+{
+    Write-Host "
+Internet Explorer Enhanced Security has already been disabled.
+    " -ForegroundColor Green
+}
+
+#Disable User Access Control
+IF (((Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System").ConsentPromptBehaviorAdmin | Where-Object {$_ -gt "0"}))
+{
+    Disable-UserAccessControl
+}
+ELSE
+{
+    Write-Host "
+User Access Control has already been disabled. 
+    " -ForegroundColor Green
+}
+
 Write-Host "
 Done! Now go configure your site" -ForegroundColor Green 
 #Opening IE to your WP site
