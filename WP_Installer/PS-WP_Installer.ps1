@@ -75,9 +75,10 @@ $LocalPSVers = (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\PowerShell\3\PowerShe
 
 IF (-not$LocalPSVers)
 {
-    Read-Host "
+    Write-Host "
 You need to upgrade to atleast PS Verion 5 before running this script!
-    Press enter to exit" 
+" -ForegroundColor Red
+    Read-Host "Press enter to exit"
     BREAK
 }
 ELSE
