@@ -1,5 +1,9 @@
 # PS-WP_Installer
-Wordpress Installation with a Powershell Script
+
+##Wordpress Installation with a Powershell Script
+
+This script was written with the intent to configure WordPress on a server from a "common" Golden Image. 
+After the first site has been created, this script can be run again to add more sites as you see fit. 
 
 
 
@@ -19,10 +23,10 @@ Wordpress Installation with a Powershell Script
     Author: Michael Groff
     Minimum OS: 2012, 2012 R2
     PS Version: 5.0
-    Date:  1/12/17
+    Date:  1/18/17
 	
 
 
-Run the script with: 
+##Run the script with: 
 
-& .\PS-WP_Installer.ps1
+	& .\PS-WP_Installer.ps1

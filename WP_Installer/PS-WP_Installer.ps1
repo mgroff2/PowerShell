@@ -40,7 +40,7 @@ Correct Powershell Version found, you are good to go!
 }
 
 ###
-###Variables to fill out BELOW this line  ____________________________________________________________________________
+###Variables Start: 
 ###
 #Site Name, must inclue the TLD (.com, .info, .net, etc.)
 Write-Host "
@@ -49,12 +49,12 @@ The website name, must inclue the TLD (.com, .info, .net, etc.)
 $iisAppName = Read-host -prompt "Enter the website name"
 #IIS App Pool Name: 
 Write-Host "
-The iis app pool name, can be same as website)
+The iis app pool name, can be same as website
 " -ForegroundColor Yellow
 $iisAppPoolName = Read-host -prompt "Enter the iis app pool name, can be same as website"
 #Site Path
 Write-Host "
-The suggested website root directory path is C:\inetpub\wwwroot\MyWordpressSite
+The suggested website root directory path is 'C:\inetpub\wwwroot\MyWordpressSite'
 " -ForegroundColor Yellow
 $directoryPath = Read-host -prompt "Enter the Website root directory path"
 #Database Name
@@ -74,7 +74,7 @@ The Wordpress Database Password should be a strong password, minimum 12 characte
 $dbpw = Read-host -prompt "Enter the WordPress Database User Password"
 #MySQL root password
 Write-Host "
-The  MySQL root password, this will creat one if it doesnt exist
+The  MySQL root password, this will create one if it doesnt exist
 " -ForegroundColor Yellow
 $MySQL = Read-host -prompt "Enter the MySQL root password"
 #Salt Keys - https://api.wordpress.org/secret-key/1.1/salt/ (NOTE: Replace any $ that you see with another character!)
@@ -96,7 +96,7 @@ $LogInSalt = "d-O >T]uyh:9?Pu`i8|222S|eY5lW8,`lPwG-b|^-|8z5]j(P+-T6c[^PO;4ZM2q"
 $NSalt = "pT[la{_E,yMHhMu|F1F|k7*q+PQ]u[e zdUjj5(%&gZnsxUGJgYsi?:h[d|o`5I)"
 #FTPUsername
 Write-Host "
-The FTP Username is a Windows Users
+The FTP Username is a Windows User
 " -ForegroundColor Yellow
 $FTPSiteUser = Read-host -prompt "Enter the FTP Username"
 #FTP Password - NOTE: Must be UNDER 14 characters, also must have a capital letter and special character
@@ -107,7 +107,7 @@ $FTPSiteUserPW = Read-host -prompt "Enter the FTP User Pasword"
 #FTP Group
 $FTPGroup = "FTP_User_Group"
 ###
-###Variables to fill out ABOVE this line #######  ____________________________________________________________________________
+###Variables End: 
 ###
 
 ###Variables to leave alone: 
@@ -200,7 +200,7 @@ $WPIPath = Test-Path "C:\Program Files\Microsoft\Web Platform Installer\WebPlatf
 Function Install-WPI {
         IF (-not$WPIPath)
         {
-            msiexec.exe /package http://download.microsoft.com/download/C/F/F/CFF3A0B8-99D4-41A2-AE1A-496C08BEB904/WebPlatformInstaller_amd64_en-US.msi /passive | Out-Null
+            msiexec.exe /package http://download.microsoft.com/download/C/F/F/CFF3A0B8-99D4-41A2-AE1A-496C08BEB904/WebPlatformInstaller_amd64_en-US.msi /quiet /passive | Out-Null
         }
         ELSE
         {
@@ -314,25 +314,16 @@ IF (-not (Get-WmiObject -Class Win32_UserAccount | Where-Object {$_.Name -eq "$F
 Creating FTP User
     " -ForegroundColor Cyan
     Invoke-Command -ScriptBlock {net user /add $FTPSiteUser $FTPSiteUserPW} -ErrorAction SilentlyContinue
+    Write-Host "
+Adding user to FTP User Group
+    " -ForegroundColor Cyan
+    Invoke-Command -ScriptBlock {net localgroup $FTPGroup $FTPSiteUser /add }
 }
 ELSE
 {
     Write-Host "
 Local User already exists
     " -ForegroundColor Red
-}
-
-#Add User to Group - this still needs work
-$TestFTPGroupExist = (get-wmiobject Win32_GroupUser | where {$_.GroupComponent -like "*$FTPGroup*"}).partcomponent
-
-IF (-not ($TestFTPGroupExist))
-{
-    Write-Host "Adding user to FTP User Group" -ForegroundColor Cyan
-    Invoke-Command -ScriptBlock {net localgroup $FTPGroup $FTPSiteUser /add }
-}
-ELSE
-{
-    Write-Host "Local User had already been added to necessary group" -ForegroundColor Red
 }
 
 #Create FTP Site (To update Wordpress and Plugins)
