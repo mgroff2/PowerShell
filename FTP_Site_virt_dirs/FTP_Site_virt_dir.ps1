@@ -14,7 +14,7 @@
     .NOTES
     Author: Michael Groff
     Minimum OS: 2012, 2012 R2
-    PS Version: 5.0
+    PS Version: 4.0
     Date:  1/18/17
 
 #>
