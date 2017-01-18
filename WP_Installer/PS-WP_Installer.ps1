@@ -15,14 +15,14 @@
     .NOTES
     Author: Michael Groff
     Minimum OS: 2012, 2012 R2
-    PS Version: 5.0
+    PS Version: 4.0
     Date:  1/12/17
     
 #>
 
 #Checking Powershell Version
 
-$LocalPSVers = (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine\").PowerShellVersion | Where-Object {$_ -gt "5"}
+$LocalPSVers = (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine\").PowerShellVersion | Where-Object {$_ -gt "4"}
 
 IF (-not$LocalPSVers)
 {
@@ -259,7 +259,8 @@ Starting the WP install" -ForegroundColor Cyan
 
 #Install WP & all necessary modules
 cd $env:USERPROFILE\Desktop
-WebPICMD.exe /Install /Application:Wordpress@wp.app /Products:PHP54,PHPManager /AcceptEULA /MySQLPassword:$MySQL /Log:$env:HOMEDRIVE\WPIntsalllog.txt
+WebPICMD.exe /Install /Products:PHPManager /AcceptEULA
+WebPICMD.exe /Install /Application:Wordpress@wp.app /Products:PHP54 /AcceptEULA /MySQLPassword:$MySQL /Log:$env:HOMEDRIVE\WPIntsalllog.txt
 
 #Configure URL Rewrite Rule 
 Add-WebConfigurationProperty -pspath $sitelocation -filter "system.webServer/rewrite/rules" -name "." -value @{name='Wordpress';patternSyntax='Wildcard'}
